@@ -1,10 +1,5 @@
 import json
-
-def base():
-    """Алгоритм построения базы."""
-
-    return 1
-
+import os
 
 class Base:
     def __init__(self, priority_building_file='dens5.txt') -> None:
@@ -38,10 +33,13 @@ class Base:
         to_build = []
 
         # Подгрузить список приоритета
-        with open("build_patterns\\" + self._priority_building_file) as f:
+        with open(os.path.join("build_patterns", self._priority_building_file)) as f:
             priority_building = json.load(f)
 
         for i, next_coords in enumerate(priority_building):
+
+            if i > self._curr_len_of_priority:
+                break
 
             x = head['x'] + next_coords[0]
             y = head['y'] + next_coords[0]
@@ -51,7 +49,11 @@ class Base:
                 if x == base['x'] and y == base['y']:
                     continue
 
-                
+            # TODO Можно ли тут построить
+
+
+            # TODO Обновления длины
+
 
             # Если зомби
             for zombie in zombies:
