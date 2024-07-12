@@ -1,24 +1,15 @@
 import api
+import base
 
-def nearest_enemy_manhattan(units):
-    """Ближайший враг по Манхеттеновскому расстоянию."""
-    head = {}
+def nearest_enemy(cell, units):
 
-    # Главный штабик.
-    for cell in units["base"]:
-        if cell.get("isHead", False):
-            head = cell
-            break
-    
-    print("База", head)
-    
     zombies = units.get("zombies", []) or []
     nearest_zombie_distance = 100000000
     nearest_zombie = None
     print("Поиск зомбаков")
     for zombie in zombies:
-        x_len = abs(zombie["x"] - head["x"])
-        y_len = abs(zombie["y"] - head["y"])
+        x_len = abs(zombie["x"] - cell["x"])
+        y_len = abs(zombie["y"] - cell["y"])
         zombie["distance"] = x_len + y_len
         if zombie["distance"] < nearest_zombie_distance:
             nearest_zombie_distance = zombie["distance"]
@@ -30,8 +21,8 @@ def nearest_enemy_manhattan(units):
     nearest_enemy = None
     print("Поиск людей")
     for enemy in enemies:
-        x_len = abs(enemy["x"] - head["x"])
-        y_len = abs(enemy["y"] - head["y"])
+        x_len = abs(enemy["x"] - cell["x"])
+        y_len = abs(enemy["y"] - cell["y"])
         enemy["distance"] = x_len + y_len
         if enemy["distance"] < nearest_enemy_distance:
             nearest_enemy_distance = enemy["distance"]
@@ -51,5 +42,20 @@ def nearest_enemy_manhattan(units):
         return nearest_zombie
     else:
         return nearest_enemy
-    
+
+def nearest_enemies(units):
+    """Ближайший враг по Манхеттеновскому расстоянию."""
+
+    result = []
+    for cell in units.get("base") or []:
+        enemy = nearest_enemy(cell, units)
+        hit = {
+            "blockId": cell["id"],
+            "target": {
+                "x": enemy["x"],
+                "y": enemy["y"]
+            }
+        }
+        result.append(hit)
+    return result
 

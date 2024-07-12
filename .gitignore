@@ -1,2 +1,4 @@
 .vscode
 .secrets
+__pycache__
+dataset
