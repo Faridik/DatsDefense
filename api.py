@@ -1,8 +1,5 @@
 import requests
 import yarl
-import json
-import time
-import pathlib
 
 HEADERS = {"X-Auth-Token": "6686ce63049946686ce6304999"}
 
@@ -15,9 +12,13 @@ PARTICIPATE = "play/zombidef/participate"
 
 def command(data):
     url = yarl.URL(HOST) / COMMAND
-    r = requests.post(url, json=data, headers=HEADERS)
-    data = r.json()
-    return data
+    try:
+        r = requests.post(url, json=data, headers=HEADERS)
+        response_data = r.json()
+    except:
+        response_data = {}
+        print("Failed to send command")
+    return response_data
 
 def units():
     url = yarl.URL(HOST) / UNITS
@@ -25,7 +26,7 @@ def units():
     try:
         data = r.json()
     except:
-        data = None
+        data = {}
     return data
 
 def world():
@@ -34,7 +35,7 @@ def world():
         r = requests.get(url, headers=HEADERS)
         data = r.json()
     except:
-        data = None
+        data = {}
     return data
 
 def participate():
@@ -43,5 +44,5 @@ def participate():
         r = requests.put(url, headers=HEADERS)
         data = r.json()
     except:
-        data = None
+        data = {}
     return data

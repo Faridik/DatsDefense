@@ -9,9 +9,10 @@ ASCII_LOGO = """
                     |__/                                
 """
 
-def main(bot: Bot):
+def main():
+    print(ASCII_LOGO)
+    bot = Bot()
     bot.go()
 
 if __name__ == "__main__":
-    bot = Bot()
-    main(bot)
+    main()

@@ -2,9 +2,11 @@ import api
 import algorithms
 import time
 
+TURN_TIME = 2
 
 class Bot:
     def __init__(self) -> None:
+        self._Base = algorithms.Base()
         self._world = {}
         self._units = {}
         self._head = {}
@@ -41,11 +43,11 @@ class Bot:
         """Сколько осталось до конца хода."""
         if "turn" in self._units:
             return self._units["turnEndsInMs"]
-        return 1
+        return TURN_TIME
     
     def refresh(self):
         """Запросить данные с сервера."""
-        if len(self._world.keys()) == 0:
+        if len(self._world.keys()) == 0 or "error" in self._world:
             self._world = api.world()
         self._units = api.units()
         # Выполняется поиск головы.
@@ -54,11 +56,10 @@ class Bot:
                 if "isHead" in cell:
                     self._head = cell
 
-    @log_decorator
     def base(self):
         """Возвращает команду для построения базы."""
         try:
-            return algorithms.base(units=self._units, world=self._world, head=self._head)
+            return self._Base.update(units=self._units, world=self._world, head=self._head)
         except:
             return None
 
@@ -101,6 +102,7 @@ class Bot:
             self.commit(attack=attack, build=build, move_base=move)
             self.print_status()
             
-            end = time.monotonic - start
-            sleep_time = self.turn_ends_in_ms - end
-            time.sleep(1)
+            end = time.monotonic() - start
+            sleep_time = (self.turn_ends_in_ms - end) % TURN_TIME
+            print(f"∟ timing: {end:.3}s, {sleep_time=:.3}s")
+            time.sleep(sleep_time)
