@@ -10,12 +10,12 @@ HOST = "https://games-test.datsteam.dev/"
 UNITS = "play/zombidef/units"
 COMMAND = "play/zombidef/command"
 WORLD = "play/zombidef/world"
-
+PARTICIPATE = "play/zombidef/participate"
 
 
 def command(data):
     url = yarl.URL(HOST) / COMMAND
-    r = requests.post(url, data=data, headers=HEADERS)
+    r = requests.post(url, json=data, headers=HEADERS)
     data = r.json()
     return data
 
@@ -30,8 +30,17 @@ def units():
 
 def world():
     url = yarl.URL(HOST) / WORLD
-    r = requests.get(url, headers=HEADERS)
     try:
+        r = requests.get(url, headers=HEADERS)
+        data = r.json()
+    except:
+        data = None
+    return data
+
+def participate():
+    url = yarl.URL(HOST) / PARTICIPATE
+    try:
+        r = requests.put(url, headers=HEADERS)
         data = r.json()
     except:
         data = None
