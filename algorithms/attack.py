@@ -61,6 +61,9 @@ class Attack:
         queue = [head]
         head['visited'] = True
 
+        if len(head.keys()) == 0:
+            return
+
         while queue:
 
             s = queue.pop(0)

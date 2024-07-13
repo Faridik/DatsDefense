@@ -66,10 +66,9 @@ class Bot:
         self._world = api.world()
         self._units = api.units()
         # Выполняется поиск головы.
-        if len(self._head.keys()) == 0:
-            for cell in self._units.get("base", []) or []:
-                if "isHead" in cell:
-                    self._head = cell
+        for cell in self._units.get("base", []) or []:
+            if "isHead" in cell:
+                self._head = cell
 
     @timeit
     def base(self):
@@ -105,8 +104,8 @@ class Bot:
         if move_base is None:
             return
         self._Base.update_pattern(head=self._head, move=move_base)
-        self._head["x"] = move_base["x"]
-        self._head["y"] = move_base["y"]
+        # self._head["x"] = move_base["x"]
+        # self._head["y"] = move_base["y"]
 
     def commit(self, *, attack=None, build=None, move_base=None):
         """Совершить действие до конца хода."""
@@ -120,9 +119,15 @@ class Bot:
         api.command(request_data)
 
 
-    def print_status(self):
+    def print_status(self, attack, build):
         head_coords = f"({self._head.get('x')}, {self._head.get('y')})"
-        print(f"[ {self.turn} ] ❤️  = {self.health}, 🪙  = {self.gold}, 🏠  = {self.size} | {head_coords} | {self.turn_ends_in_ms}")
+        attack_log = ""
+        build_log = ""
+        if attack:
+            attack_log = f"⚔️  = {len(attack)}, "
+        if build:
+            build_log = f"🛠️  = {len(build)}"
+        print(f"[ {self.turn} ] ❤️  = {self.health}, 🪙  = {self.gold}, 🏠  = {self.size}, {attack_log}{build_log} | {head_coords}")
 
     def go(self):
         while True:
@@ -134,7 +139,7 @@ class Bot:
             move = self.move()
             self.commit(attack=attack, build=build, move_base=move)
             self.calibrate(move_base=move)
-            self.print_status()
+            self.print_status(attack=attack, build=build)
 
             end = time.perf_counter() - start
             sleep_time = (self.turn_ends_in_ms - end) % TURN_TIME
