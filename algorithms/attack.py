@@ -19,24 +19,37 @@ class Attack:
         return self._attack(units)
     
     def _attack(self, units):
-        self._our_cells = units.get("base", []) or []
-        self._zombies = units.get("zombies", []) or []
+        # Новый запрос
+        self._response.clear()
+
+        # Достать базу, игроков и зомби
+        self._our_cells = units.get("base", []).copy() or []
+        self._zombies = units.get("zombies", []).copy() or []
         for zombie in self._zombies:
             zombie['our_cells'] = []
-
-        self._players = units.get("enemyBlocks", []) or []
+        self._players = units.get("enemyBlocks", []).copy() or []
         for player in self._players:
             player['our_cells'] = []
 
+        # Найти достижимых противников и создать связи
+        # между ними и клетакми базы
         self._check_enemies()
+
+        # Задание приоритетов по уничтожению для зомби
         self._set_priority()
+
+        # Нападение на зомби с приоритетом 2
         self._attack_zombie_priority_2()
+
+        # Нападение остальными ячейками базы
         self._attack_other()
 
-        self._zombies = []
-        self._players = []
-        self._our_cells = []
+        # Очистка данных
+        self._zombies.clear()
+        self._players.clear()
+        self._our_cells.clear()
 
+        # Возвращаем запрос
         return self._response
 
 
@@ -137,7 +150,13 @@ class Attack:
             for cell in zombie["our_cells"]:
                 if zombie["y"] == cell["y"]:
                     if zombie["x"] <= cell["x"] <= zombie["x"] + zombie["speed"]:
-                        zombie["priority"] = 1 if zombie["waitTurns"] == 1 else 2
+                        if zombie["waitTurns"] == 1:
+                            zombie["priority"] = 2 
+                            return
+            for cell in zombie["our_cells"]:
+                if zombie["y"] == cell["y"]:
+                    if zombie["x"] <= cell["x"] <= zombie["x"] + zombie["speed"]:
+                        zombie["priority"] = 1 
                         return
                     if zombie["x"] <= cell["x"] <= zombie["x"] + 2 * zombie["speed"]:
                         zombie["priority"] = 1
@@ -147,7 +166,13 @@ class Attack:
             for cell in zombie["our_cells"]:
                 if zombie["y"] == cell["y"]:
                     if zombie["x"] - zombie["speed"] <= cell["x"] <= zombie["x"]:
-                        zombie["priority"] = 1 if zombie["waitTurns"] == 1 else 2
+                        if zombie["waitTurns"] == 1:
+                            zombie["priority"] = 2 
+                            return
+            for cell in zombie["our_cells"]:
+                if zombie["y"] == cell["y"]:
+                    if zombie["x"] - zombie["speed"] <= cell["x"] <= zombie["x"]:
+                        zombie["priority"] = 1 
                         return
                     if zombie["x"] - 2 * zombie["speed"] <= cell["x"] <= zombie["x"]:
                         zombie["priority"] = 1
@@ -157,19 +182,32 @@ class Attack:
             for cell in zombie["our_cells"]:
                 if zombie["x"] == cell["x"]:
                     if zombie["y"] <= cell["y"] <= zombie["y"] + zombie["speed"]:
-                        zombie["priority"] = 1 if zombie["waitTurns"] == 1 else 2
+                        if zombie["waitTurns"] == 1:
+                            zombie["priority"] = 2 
+                            return
+            for cell in zombie["our_cells"]:
+                if zombie["x"] == cell["x"]:
+                    if zombie["y"] <= cell["y"] <= zombie["y"] + zombie["speed"]:
+                        zombie["priority"] = 1 
                         return
                     if zombie["y"] <= cell["y"] <= zombie["y"] + 2 * zombie["speed"]:
                         zombie["priority"] = 1
                         return
 
+
         if zombie["direction"] == "down":
             for cell in zombie["our_cells"]:
                 if zombie["x"] == cell["x"]:
                     if zombie["y"] - zombie["speed"] <= cell["y"] <= zombie["y"]:
-                        zombie["priority"] = 1 if zombie["waitTurns"] == 1 else 2
+                        if zombie["waitTurns"] == 1:
+                            zombie["priority"] = 2 
+                            return
+            for cell in zombie["our_cells"]:
+                if zombie["x"] == cell["x"]:
+                    if zombie["y"] - zombie["speed"] <= cell["y"] <= zombie["y"]:
+                        zombie["priority"] = 1 
                         return
-                    if zombie["y"] - 2 * zombie["speed"]<= cell["y"] <= zombie["y"]:
+                    if zombie["y"] - 2 * zombie["speed"] <= cell["y"] <= zombie["y"]:
                         zombie["priority"] = 1
                         return
 
@@ -180,7 +218,7 @@ class Attack:
         zombies_prior_2 = list(filter(lambda z: z["priority"] == 2, self._zombies))
 
         for zombie in sorted(zombies_prior_2, 
-                             key=lambda z: -self._zombie_coeff[zombie["type"]] * zombie["attack"]):
+                             key=lambda z: -self._zombie_coeff[z["type"]] * z["attack"]):
 
             self._attack_one_zombie_prior_2(zombie)
             self._zombies.remove(zombie)
@@ -216,6 +254,8 @@ class Attack:
             zombie["health"] -= cell["attack"]
 
             if zombie["health"] <= 0:
+                for cell in zombie["our_cells"]:
+                    cell["zombies"].remove(zombie)
                 return
 
     def _attack_other(self):
@@ -238,11 +278,13 @@ class Attack:
                 self._attack_one_enemy(cell, cell["players"][0], "players")
                 continue
 
-            
-            
             # Затем зомби с приоритетом 0
             if cell["zombies"] != []:
-                self._attack_one_enemy(cell, cell["zombies"][0], "zombies")
+                for zombie in cell["zombies"]:
+                    if zombie["priority"] == 0:
+                        self._attack_one_enemy(cell, zombie, "zombies")
+                        break
+            
 
             
 
@@ -265,15 +307,16 @@ class Attack:
         # Если враг умер, то очищаешь ячейки, которые могут по нему стрелять
         if enemy["health"] <= 0:
             for an_cells in enemy["our_cells"]:
-                an_cells[type].remove(enemy)
+                 an_cells[type].remove(enemy)
+
         else:   # Если нет, то очищаем только текущю ячейку
             cell[type].remove(enemy)
             enemy["our_cells"].remove(cell)
-        
 
         
 
-            
+        
+
 
 
 
