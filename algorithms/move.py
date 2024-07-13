@@ -23,8 +23,8 @@ def move(units, world, head):
             dx_curr = head["x"] - zpot["x"]
             dy_curr = head["y"] - zpot["y"]
             dist = ((dx_curr * dx_curr) + (dy_curr * dy_curr)) ** (1/2)
-            dx += dx_curr / dist / dist
-            dy += dy_curr / dist / dist
+            dx += dx_curr / (dist ** 3)
+            dy += dy_curr / (dist ** 3)
 
 
     if abs(dy) - abs(dx) > 0:
@@ -33,6 +33,7 @@ def move(units, world, head):
             if check_base(units, move):
                 return move
             else:
+                move["y"] -= 1
                 if dx > 0:
                     move["x"] += 1
                     if not check_base(units, move):
@@ -46,6 +47,7 @@ def move(units, world, head):
             if check_base(units, move):
                 return move
             else:
+                move["y"] += 1
                 if dx > 0:
                     move["x"] += 1
                     return move if check_base(units, move) else None
@@ -60,6 +62,7 @@ def move(units, world, head):
             if check_base(units, move):
                 return move
             else:
+                move["x"] -= 1
                 if dy > 0:
                     move["y"] += 1
                     if not check_base(units, move):
@@ -73,6 +76,7 @@ def move(units, world, head):
             if check_base(units, move):
                 return move
             else:
+                move["x"] += 1
                 if dy > 0:
                     move["y"] += 1
                     return move if check_base(units, move) else None
