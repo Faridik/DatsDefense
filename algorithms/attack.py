@@ -10,20 +10,20 @@ class Attack:
             "bomber": 5,
             "liner": 4,
             "juggernaut": 1,
-            "chaos_knight": 0.5
+            "chaos_knights": 0.5
         }
 
         self._response = []
 
-    def update(self, units):
-        return self._attack(units)
+    def update(self, units, head):
+        return self._attack(units, head)
     
-    def _attack(self, units):
+    def _attack(self, units, head):
         # Новый запрос
         self._response.clear()
 
         # Достать базу, игроков и зомби
-        self._our_cells = (units.get("base", []) or []).copy()
+        self._bfs(units, head)
         self._zombies = (units.get("zombies", []) or []).copy()
         for zombie in self._zombies:
             zombie['our_cells'] = []
@@ -51,6 +51,27 @@ class Attack:
 
         # Возвращаем запрос
         return self._response
+
+    def _bfs(self, units, head):
+        cells = units.get("base", []).copy() or []
+
+        for cell in cells:
+            cell['visited'] = False
+
+        queue = [head]
+        head['visited'] = True
+
+        while queue:
+
+            s = queue.pop(0)
+            self._our_cells.append(s)
+
+            for cell in cells:
+                distance = abs(cell['x']  - s['x']) + abs(cell['y'] - s['y'])
+                if distance <= 1 and not cell['visited']:
+                    queue.append(cell)
+                    cell['visited'] = True
+            
 
 
     def _check_enemies(self):
@@ -317,15 +338,6 @@ class Attack:
             enemy["our_cells"].remove(cell)
 
         
-
-        
-
-
-
-
-
-
-
 
 
 
