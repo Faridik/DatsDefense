@@ -5,15 +5,11 @@ def check_base(units, move):
             return True
     return False
 
-PREVIOUS_UPDATE = 0
-
 def move(units, world, head):
 
-    if (PREVIOUS_UPDATE < 5):
-        PREVIOUS_UPDATE += 1
+    turn = units.get("turn", 0)
+    if turn % 5 != 0:
         return None
-    
-    PREVIOUS_UPDATE = 0
 
     zpots = world.get("zpots", []) or []
     dx = 0
