@@ -91,7 +91,6 @@ class Bot:
         try:
             return algorithms.move(self._units, self._world, self._head)
         except Exception as e:
-            print(e)
             return None
 
     def calibrate(self, move_base=None):
