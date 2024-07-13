@@ -85,7 +85,7 @@ class Bot:
     def attack(self):
         """Возвращает команду для атаки."""
         try:
-            return self._Attack.update(units=self._units)
+            return self._Attack.update(units=self._units, head=self._head)
         except Exception as e:
             print("FAILED TO ATTACK:", e)
             traceback.print_exception(e)
