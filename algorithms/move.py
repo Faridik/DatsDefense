@@ -13,8 +13,8 @@ def move(units, world, head):
         if zpot["type"] == "default":
             dx_curr = head["x"] - zpot["x"]
             dy_curr = head["y"] - zpot["y"]
-            dx += dx_curr
-            dy += dy_curr
+            dx += 1/dx_curr
+            dy += 1/dy_curr
 
 
     if abs(dy) - abs(dx) > 0:
