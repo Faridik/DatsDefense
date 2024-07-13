@@ -1,6 +1,7 @@
 import api
 import algorithms
 import time
+import traceback
 from functools import wraps
 
 
@@ -75,7 +76,9 @@ class Bot:
         """Возвращает команду для построения базы."""
         try:
             return self._Base.update(units=self._units, world=self._world, head=self._head)
-        except:
+        except Exception as e:
+            print("FAILED TO BUILD:", e)
+            traceback.print_exception(e)
             return None
 
     @timeit
@@ -83,7 +86,9 @@ class Bot:
         """Возвращает команду для атаки."""
         try:
             return self._Attack.update(units=self._units)
-        except:
+        except Exception as e:
+            print("FAILED TO ATTACK:", e)
+            traceback.print_exception(e)
             return None
     @timeit
     def move(self):
@@ -91,6 +96,8 @@ class Bot:
         try:
             return algorithms.move(self._units, self._world, self._head)
         except Exception as e:
+            print("FAILED TO MOVE:", e)
+            traceback.print_exception(e)
             return None
 
     def calibrate(self, move_base=None):
@@ -115,7 +122,7 @@ class Bot:
 
     def print_status(self):
         head_coords = f"({self._head.get('x')}, {self._head.get('y')})"
-        print(f"[ {self.turn} ] ❤️  = {self.health}, 🪙  = {self.gold}, 🏠  = {self.size} | {head_coords}")
+        print(f"[ {self.turn} ] ❤️  = {self.health}, 🪙  = {self.gold}, 🏠  = {self.size} | {head_coords} | {self.turn_ends_in_ms}")
 
     def go(self):
         while True:
