@@ -5,7 +5,14 @@ def check_base(units, move):
             return True
     return False
 
+PREVIOUS_UPDATE = 0
+
 def move(units, world, head):
+
+    if (PREVIOUS_UPDATE < 5):
+        PREVIOUS_UPDATE += 1
+        return None
+
     zpots = world.get("zpots", []) or []
     dx = 0
     dy = 0
@@ -14,8 +21,8 @@ def move(units, world, head):
             dx_curr = head["x"] - zpot["x"]
             dy_curr = head["y"] - zpot["y"]
             dist = ((dx_curr * dx_curr) + (dy_curr * dy_curr)) ** (1/2)
-            dx += dx_curr / dist
-            dy += dy_curr / dist
+            dx += dx_curr / dist / dist
+            dy += dy_curr / dist / dist
 
 
     if abs(dy) - abs(dx) > 0:
