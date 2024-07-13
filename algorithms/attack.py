@@ -274,12 +274,15 @@ class Attack:
                 continue
 
             # Затем зомби с приоритетом 0
+            is_attacked = False
             if cell["zombies"] != []:
                 for zombie in cell["zombies"]:
                     if zombie["priority"] == 0:
                         self._attack_one_enemy(cell, zombie, "zombies")
+                        is_attacked = True
                         break
-
+            if is_attacked:
+                continue
             # Потом бьём игроков
             if cell["players"] != []:
                 self._attack_one_enemy(cell, cell["players"][0], "players")
