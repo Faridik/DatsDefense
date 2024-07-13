@@ -10,8 +10,9 @@ class Base:
         
         self._pattern_x = 0
         self._pattern_y = 0
+        
         # Примерная длина, до которой можем достроиться
-        self._curr_len_of_priority = 3
+        self._curr_len_of_priority = 10000
 
 
     def update(self, units, world, head):
@@ -38,9 +39,6 @@ class Base:
         gold = units['player']['gold']
         if gold == 0:
             return []
-        
-        # Теоретический максимум: предыдущий шаг + кол-во монет
-        self._curr_len_of_priority += gold
 
         # Что может помешать
         our_base = units.get("base", []) or []
@@ -115,8 +113,5 @@ class Base:
             # Если золота нет
             if gold == 0:
                 break
-
-        # Обновления длины
-        self._curr_len_of_priority = i
 
         return to_build
