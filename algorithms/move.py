@@ -12,6 +12,8 @@ def move(units, world, head):
     if (PREVIOUS_UPDATE < 5):
         PREVIOUS_UPDATE += 1
         return None
+    
+    PREVIOUS_UPDATE = 0
 
     zpots = world.get("zpots", []) or []
     dx = 0
