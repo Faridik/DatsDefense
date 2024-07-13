@@ -10,9 +10,6 @@ class Base:
         
         self._pattern_x = 0
         self._pattern_y = 0
-        
-        # Примерная длина, до которой можем достроиться
-        self._curr_len_of_priority = 10000
 
 
     def update(self, units, world, head):
@@ -49,10 +46,7 @@ class Base:
         # Список для постройки
         to_build = []
 
-        for i, next_coords in enumerate(self._priority_building):
-
-            if i > self._curr_len_of_priority:
-                break
+        for next_coords in self._priority_building:
 
             x = head['x'] + next_coords[0]
             y = head['y'] + next_coords[1]
