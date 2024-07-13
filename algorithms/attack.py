@@ -23,11 +23,11 @@ class Attack:
         self._response.clear()
 
         # Достать базу, игроков и зомби
-        self._our_cells = units.get("base", []).copy() or []
-        self._zombies = units.get("zombies", []).copy() or []
+        self._our_cells = (units.get("base", []) or []).copy()
+        self._zombies = (units.get("zombies", []) or []).copy()
         for zombie in self._zombies:
             zombie['our_cells'] = []
-        self._players = units.get("enemyBlocks", []).copy() or []
+        self._players = (units.get("enemyBlocks", []) or []).copy()
         for player in self._players:
             player['our_cells'] = []
 
