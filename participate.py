@@ -8,6 +8,7 @@ while True:
     try:
         r = requests.put("https://games-test.datsteam.dev/play/zombidef/participate", headers=HEADERS)
         data = r.json()
+        print(data)
     except:
         print("Ошибка...")
     time.sleep(10)
