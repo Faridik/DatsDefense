@@ -2,7 +2,7 @@ import json
 import os
 
 class Base:
-    def __init__(self, priority_building_file='dens5_0_0.txt') -> None:
+    def __init__(self, priority_building_file='new_dens5_0_0.txt') -> None:
         
         # Загрузка паттерна
         with open(os.path.join("algorithms", "build_patterns", priority_building_file)) as f:
@@ -19,7 +19,7 @@ class Base:
         self._pattern_x = (self._pattern_x + move["x"] - head["x"]) % 6
         self._pattern_y = (self._pattern_y + move["y"] - head["y"]) % 6
 
-        filename = f"dens5_{self._pattern_x}_{self._pattern_y}.txt"
+        filename = f"new_dens5_{self._pattern_x}_{self._pattern_y}.txt"
         with open(os.path.join("algorithms", "build_patterns", filename)) as f:
             self._priority_building = json.load(f)  
 
