@@ -89,9 +89,18 @@ class Bot:
     def move(self):
         """Возвращает команду для перемещения базы."""
         try:
-            return algorithms.move()
-        except:
+            return algorithms.move(self._units, self._world, self._head)
+        except Exception as e:
+            print(e)
             return None
+
+    def calibrate(self, move_base=None):
+        """Откалибровать базу, если вдруг поменялся центр."""
+        if move_base is None:
+            return
+        self._Base.update_pattern(head=self._head, move=move_base)
+        self._head["x"] = move_base["x"]
+        self._head["y"] = move_base["y"]
 
     def commit(self, *, attack=None, build=None, move_base=None):
         """Совершить действие до конца хода."""
@@ -104,8 +113,10 @@ class Bot:
             request_data["moveBase"] = move_base
         api.command(request_data)
 
+
     def print_status(self):
-        print(f"[ {self.turn} ] ❤️  = {self.health}, 🪙  = {self.gold}, 🏠  = {self.size}")
+        head_coords = f"({self._head.get('x')}, {self._head.get('y')})"
+        print(f"[ {self.turn} ] ❤️  = {self.health}, 🪙  = {self.gold}, 🏠  = {self.size} | {head_coords}")
 
     def go(self):
         while True:
@@ -116,8 +127,9 @@ class Bot:
             attack = self.attack()
             move = self.move()
             self.commit(attack=attack, build=build, move_base=move)
+            self.calibrate(move_base=move)
             self.print_status()
-            
+
             end = time.perf_counter() - start
             sleep_time = (self.turn_ends_in_ms - end) % TURN_TIME
             print(f"---> timing: {end:.3}s, {sleep_time=:.3}s")
