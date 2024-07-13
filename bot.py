@@ -7,6 +7,7 @@ TURN_TIME = 2
 class Bot:
     def __init__(self) -> None:
         self._Base = algorithms.Base()
+        self._Attack = algorithms.Attack()
         self._world = {}
         self._units = {}
         self._head = {}
@@ -66,7 +67,7 @@ class Bot:
     def attack(self):
         """Возвращает команду для атаки."""
         try:
-            return algorithms.attack()
+            return self._Attack.update(units=self._units)
         except:
             return None
         

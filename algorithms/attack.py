@@ -1,6 +1,3 @@
-def attack():
-    return 2
-
 class Attack:
     def __init__(self) -> None:
         self._zombies = []
@@ -225,12 +222,7 @@ class Attack:
         for cell in sorted(self._our_cells, 
                            key=lambda cell: len(cell["zombies"]) + len(cell["players"])):
             
-            # Сначала бьём игроков
-            if cell["players"] != []:
-                self._attack_one_enemy(cell, cell["players"][0], "players")
-                continue
-
-            # Затем зомби с приоритетом 1
+            # Сначала бьём зомби с приоритетом 1
             is_attacked = False
             if cell["zombies"] != []:
                 for zombie in cell["zombies"]:
@@ -240,6 +232,13 @@ class Attack:
                         break
             if is_attacked:
                 continue
+
+            # Потом бьём игроков
+            if cell["players"] != []:
+                self._attack_one_enemy(cell, cell["players"][0], "players")
+                continue
+
+            
             
             # Затем зомби с приоритетом 0
             if cell["zombies"] != []:

@@ -56,10 +56,10 @@ class Base:
             # Можно ли тут построить
             can_be_build = False
             for base in our_base:
-                if x >= base['x'] - 1 and x <= base['x'] + 1 and \
-                    y >= base['y'] - 1 and y <= base['y'] + 1:
+                distance = abs(base['x'] - x) + abs(base['y'] - y)
+                if distance <= 1:
                     can_be_build = True
-                    continue
+                    break
             if not can_be_build:
                 continue
 
