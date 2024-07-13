@@ -10,7 +10,7 @@ class Attack:
             "bomber": 5,
             "liner": 4,
             "juggernaut": 1,
-            "chaos_knights": 0.5
+            "chaos_knight": 0.5
         }
 
         self._response = []
@@ -53,7 +53,7 @@ class Attack:
         return self._response
 
     def _bfs(self, units, head):
-        cells = units.get("base", []).copy() or []
+        cells = (units.get("base", []) or []).copy()
 
         for cell in cells:
             cell['visited'] = False
@@ -112,7 +112,10 @@ class Attack:
 
             # Если зомби рядом нет, то удаляем ячейку        
             if cell["zombies"] == [] and cell["players"] == []:
-                self._our_cells.remove(cell)
+                try:
+                    self._our_cells.remove(cell)
+                except:
+                    pass
     
 
 
@@ -128,7 +131,10 @@ class Attack:
 
             # Если не можем атаковать, то что ж...
             if zombie["our_cells"] == []:
-                self._zombies.remove(zombie)
+                try:
+                    self._zombies.remove(zombie)
+                except:
+                    pass
                 continue
             
             self._set_priority_for_zombie(zombie)
@@ -242,7 +248,10 @@ class Attack:
                              key=lambda z: -self._zombie_coeff[z["type"]] * z["attack"]):
 
             self._attack_one_zombie_prior_2(zombie)
-            self._zombies.remove(zombie)
+            try:
+                self._zombies.remove(zombie)
+            except:
+                pass
 
 
     def _attack_one_zombie_prior_2(self, zombie):
@@ -260,23 +269,28 @@ class Attack:
             
             # Удаляем эту ячейку из других зомби
             for an_zombie in cell["zombies"]:
-                an_zombie["our_cells"].remove(cell)
+                try:
+                    an_zombie["our_cells"].remove(cell)
+                except:
+                    pass
 
-                # Если в зомби никто не целится, то удаляем его
-                # как будто это не нужно, так как мы больше не итерируем по зомби
-                # if len(an_zombie["our_cells"]) == 0:
-                #     self._zombies.remove(an_zombie)
             # Можно ещё удалить ссылку на ячейку у игроков
 
             # Удаляем саму ячейку, больше ей стрелять не сможем
-            self._our_cells.remove(cell)
+            try:
+                self._our_cells.remove(cell)
+            except:
+                pass
 
             # Уменьшаем кол-во жизней
             zombie["health"] -= cell["attack"]
 
             if zombie["health"] <= 0:
                 for cell in zombie["our_cells"]:
-                    cell["zombies"].remove(zombie)
+                    try:
+                        cell["zombies"].remove(zombie)
+                    except:
+                        pass
                 return
 
     def _attack_other(self):
@@ -331,11 +345,17 @@ class Attack:
         # Если враг умер, то очищаешь ячейки, которые могут по нему стрелять
         if enemy["health"] <= 0:
             for an_cells in enemy["our_cells"]:
-                 an_cells[type].remove(enemy)
+                try:
+                    an_cells[type].remove(enemy)
+                except:
+                    pass
 
         else:   # Если нет, то очищаем только текущю ячейку
-            cell[type].remove(enemy)
-            enemy["our_cells"].remove(cell)
+            try:
+                cell[type].remove(enemy)
+                enemy["our_cells"].remove(cell)
+            except:
+                pass
 
         
 
