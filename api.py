@@ -7,7 +7,7 @@ from functools import wraps
 
 HEADERS = {"X-Auth-Token": "6686ce63049946686ce6304999"}
 
-HOST = "https://games-test.datsteam.dev/"
+HOST = "https://games.datsteam.dev/"
 UNITS = "play/zombidef/units"
 COMMAND = "play/zombidef/command"
 WORLD = "play/zombidef/world"

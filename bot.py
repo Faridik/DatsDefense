@@ -92,6 +92,11 @@ class Bot:
     @timeit
     def move(self):
         """Возвращает команду для перемещения базы."""
+
+        if (self.turn > 100):
+            # Явно запретим, чтобы не ломать сетку.
+            return None
+        
         try:
             return algorithms.move(self._units, self._world, self._head)
         except Exception as e:
@@ -103,9 +108,11 @@ class Bot:
         """Откалибровать базу, если вдруг поменялся центр."""
         if move_base is None:
             return
-        self._Base.update_pattern(head=self._head, move=move_base)
-        # self._head["x"] = move_base["x"]
-        # self._head["y"] = move_base["y"]
+        try:
+            self._Base.update_pattern(head=self._head, move=move_base)
+        except Exception as e:
+            traceback.print_exception(e)
+            print("FAILED TO CALIBRATE:", e)
 
     def commit(self, *, attack=None, build=None, move_base=None):
         """Совершить действие до конца хода."""

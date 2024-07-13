@@ -10,7 +10,7 @@ class Attack:
             "bomber": 5,
             "liner": 4,
             "juggernaut": 1,
-            "chaos_knight": 0.5
+            "chaos_knight": 2
         }
 
         self._response = []
