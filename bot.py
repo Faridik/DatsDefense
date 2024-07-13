@@ -1,8 +1,21 @@
 import api
 import algorithms
 import time
+from functools import wraps
+
 
 TURN_TIME = 2
+
+def timeit(func):
+    @wraps(func)
+    def timeit_wrapper(*args, **kwargs):
+        start_time = time.perf_counter()
+        result = func(*args, **kwargs)
+        end_time = time.perf_counter()
+        total_time = end_time - start_time
+        print(f'Function {func.__name__}{args} {kwargs} Took {total_time:.4f} seconds')
+        return result
+    return timeit_wrapper
 
 class Bot:
     def __init__(self) -> None:
@@ -46,10 +59,10 @@ class Bot:
             return self._units["turnEndsInMs"]
         return TURN_TIME
     
+    @timeit
     def refresh(self):
         """Запросить данные с сервера."""
-        if len(self._world.keys()) == 0 or "error" in self._world:
-            self._world = api.world()
+        self._world = api.world()
         self._units = api.units()
         # Выполняется поиск головы.
         if len(self._head.keys()) == 0:
@@ -57,6 +70,7 @@ class Bot:
                 if "isHead" in cell:
                     self._head = cell
 
+    @timeit
     def base(self):
         """Возвращает команду для построения базы."""
         try:
@@ -64,13 +78,14 @@ class Bot:
         except:
             return None
 
+    @timeit
     def attack(self):
         """Возвращает команду для атаки."""
         try:
             return self._Attack.update(units=self._units)
         except:
             return None
-        
+    @timeit
     def move(self):
         """Возвращает команду для перемещения базы."""
         try:
@@ -95,7 +110,7 @@ class Bot:
     def go(self):
         while True:
             self.refresh()
-            start = time.monotonic()
+            start = time.perf_counter()
 
             build = self.base()
             attack = self.attack()
@@ -103,7 +118,7 @@ class Bot:
             self.commit(attack=attack, build=build, move_base=move)
             self.print_status()
             
-            end = time.monotonic() - start
+            end = time.perf_counter() - start
             sleep_time = (self.turn_ends_in_ms - end) % TURN_TIME
-            print(f"∟ timing: {end:.3}s, {sleep_time=:.3}s")
+            print(f"---> timing: {end:.3}s, {sleep_time=:.3}s")
             time.sleep(sleep_time)
