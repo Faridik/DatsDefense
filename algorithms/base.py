@@ -57,7 +57,7 @@ class Base:
                 break
 
             x = head['x'] + next_coords[0]
-            y = head['y'] + next_coords[0]
+            y = head['y'] + next_coords[1]
 
             # Если здесь наша база
             can_be_build = True
