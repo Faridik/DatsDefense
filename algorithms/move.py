@@ -39,12 +39,12 @@ def move(units, world, head):
             else:
                 if dx > 0:
                     move["x"] += 1
+                    return move if check_base(units, move) else None
                 else:
                     move["x"] -= 1
-                if check_base(units, move):
+                    if not check_base(units, move):
+                        move["y"] -= 1
                     return move
-                else:
-                    return None
     else:
         if dx > 0:
             move = {"x": head["x"] + 1, "y": head["y"]}
@@ -53,12 +53,12 @@ def move(units, world, head):
             else:
                 if dy > 0:
                     move["y"] += 1
-                else:
-                    move["y"] -= 1
-                if check_base(units, move):
+                    if not check_base(units, move):
+                        move["x"] += 1
                     return move
                 else:
-                    return None
+                    move["y"] -= 1
+                    return move if check_base(units, move) else None
         else:
             move = {"x": head["x"] - 1, "y": head["y"]}
             if check_base(units, move):
@@ -66,9 +66,9 @@ def move(units, world, head):
             else:
                 if dy > 0:
                     move["y"] += 1
+                    return move if check_base(units, move) else None
                 else:
                     move["y"] -= 1
-                if check_base(units, move):
+                    if not check_base(units, move):
+                        move["x"] -= 1
                     return move
-                else:
-                    return None
