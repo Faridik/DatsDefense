@@ -25,6 +25,8 @@ class Bot:
         self._world = {}
         self._units = {}
         self._head = {}
+        self._stop_move = 9999
+        self._to_cirl = 9999
 
     @property
     def gold(self):
@@ -65,7 +67,12 @@ class Bot:
         """Запросить данные с сервера."""
         self._world = api.world()
         self._units = api.units()
+        with open('props.txt') as f:
+            self._stop_move, self._to_cirl = map(int,f.read().split())
         # Выполняется поиск головы.
+        if self.turn > self._to_cirl:
+            self._Base.update_pattern_to_circle()
+
         for cell in self._units.get("base", []) or []:
             if "isHead" in cell:
                 self._head = cell
@@ -92,11 +99,10 @@ class Bot:
     @timeit
     def move(self):
         """Возвращает команду для перемещения базы."""
-
-        if (self.turn > 100):
+        if (self.turn > self._stop_move):
             # Явно запретим, чтобы не ломать сетку.
             return None
-        
+
         try:
             return algorithms.move(self._units, self._world, self._head)
         except Exception as e:
@@ -113,6 +119,8 @@ class Bot:
         except Exception as e:
             traceback.print_exception(e)
             print("FAILED TO CALIBRATE:", e)
+        # self._head["x"] = move_base["x"]
+        # self._head["y"] = move_base["y"]
 
     def commit(self, *, attack=None, build=None, move_base=None):
         """Совершить действие до конца хода."""
