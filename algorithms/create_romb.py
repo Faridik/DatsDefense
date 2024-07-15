@@ -31,12 +31,12 @@ def save_pattern(dx,dy,arr):
     if [0,0] in arr:
         arr.remove([0,0])
 
-    with open("algorithms\\build_patterns\\"+ f"new_romb5_{dx}_{dy}.txt", 'w') as f:
+    with open("build_patterns\\"+ f"new_romb5_{dx}_{dy}.txt", 'w') as f:
         json.dump(arr,f)
 
 dx = 2
 for dy in range(1,6):
-    with open("algorithms\\build_patterns\\romb.txt") as f:
+    with open("build_patterns\\romb.txt") as f:
         arr = json.load(f)
     print(dx, dy)
     save_pattern(dx, dy, arr)
