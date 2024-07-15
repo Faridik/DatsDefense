@@ -12,7 +12,7 @@ UNITS = "play/zombidef/units"
 COMMAND = "play/zombidef/command"
 WORLD = "play/zombidef/world"
 PARTICIPATE = "play/zombidef/participate"
-SAVE_DATA = True
+SAVE_DATA = False
 
 
 def save_data(func):
