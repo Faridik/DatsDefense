@@ -148,6 +148,12 @@ class Attack:
         # Без картинки не понять, что тут происходит
         # Да и с картинкой.. простой я сошёл с ума
         # даа... даа... тут хорошо...
+
+        # Ластхит - высший приоритет.
+        if zombie["health"] <= 10:
+            zombie["priority"] = 2
+            return
+
         if zombie["type"] == "chaos_knight":
             for cell in zombie["our_cells"]:
                 x_len = abs(zombie["x"] - cell["x"])
@@ -325,13 +331,7 @@ class Attack:
             if cell["players"] != []:
                 self._attack_one_enemy(cell, cell["players"][0], "players")
                 continue
-            
 
-            
-
-
-                            
-            
     def _attack_one_enemy(self, cell, enemy, type):
         # Создаём запрос 
         self._response.append({

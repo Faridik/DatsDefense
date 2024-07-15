@@ -119,9 +119,6 @@ class Bot:
         except Exception as e:
             traceback.print_exception(e)
             print("FAILED TO CALIBRATE:", e)
-        # self._head["x"] = move_base["x"]
-        # self._head["y"] = move_base["y"]
-
     def commit(self, *, attack=None, build=None, move_base=None):
         """Совершить действие до конца хода."""
         request_data = {}
